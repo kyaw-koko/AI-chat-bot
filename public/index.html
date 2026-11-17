@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Assistant</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { width: 100%; max-width: 500px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        textarea { width: 100%; height: 120px; padding: 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; resize: none; box-sizing: border-box; outline: none; transition: border-color 0.3s; }
+        textarea:focus { border-color: #007bff; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 10px; font-size: 18px; cursor: pointer; margin-top: 15px; transition: background 0.3s; }
+        button:hover { background-color: #0056b3; }
+        #response { margin-top: 25px; padding: 15px; background: #f8f9fa; border-left: 5px solid #007bff; border-radius: 5px; min-height: 50px; white-space: pre-wrap; font-size: 15px; line-height: 1.6; }
+        .loader { color: #555; font-style: italic; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>AI Assistant</h2>
+    <textarea id="userInput" placeholder="ဘာမေးချင်လဲ... (ဥပမာ- Coding အကြောင်းမေးပါ)"></textarea>
+    <button onclick="sendMessage()">AI ကို မေးမယ်</button>
+    <div id="response">အဖြေကို ဒီမှာပြပေးပါမယ်...</div>
+</div>
+
+<script>
+    async function sendMessage() {
+        const input = document.getElementById('userInput').value;
+        const responseDiv = document.getElementById('response');
+
+        if (!input.trim()) {
+            alert("ကျေးဇူးပြု၍ မေးခွန်းတစ်ခုခု ရိုက်ထည့်ပါ။");
+            return;
+        }
+
+        responseDiv.innerHTML = '<p class="loader">AI က စဉ်းစားနေပါတယ်...</p>';
+
+        try {
+            const res = await fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: input })
+            });
+
+            const data = await res.json();
+            responseDiv.innerText = data.answer || data.error;
+        } catch (error) {
+            responseDiv.innerText = "Error: Server နဲ့ ချိတ်ဆက်လို့မရပါဘူး။";
+        }
+    }
+</script>
+
+</body>
+</html>
